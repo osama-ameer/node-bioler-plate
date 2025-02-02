@@ -11,6 +11,14 @@ connectDB();
 const app = express();
 app.use(express.json());
 
+// Catch JSON parsing errors
+app.use((err, req, res, next) => {
+  if (err instanceof SyntaxError && err.status === 400 && "body" in err) {
+    return res.status(400).json({ error: "Invalid JSON format" });
+  }
+  next();
+});
+
 app.use("/api/auth", authRoutes);
 app.use("/api/business", businessRoutes);
 
