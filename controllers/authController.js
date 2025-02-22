@@ -25,6 +25,55 @@ const registerUser = async (req, res) => {
   }
 };
 
+const signupWithGithub = async (req, res) => {
+  const { code } = req.body;
+
+  if (!code) return res.status(400).send("Missing GitHub code");
+
+  try {
+    const tokenResponse = await fetch(
+      "https://github.com/login/oauth/access_token",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json", // Ensures JSON response
+        },
+        body: JSON.stringify({
+          client_id: "Ov23lizNSMDmpKgJkYHj",
+          client_secret: "41caedffffeec75e818763d03b78908768e2d211",
+          code: code,
+        }),
+      }
+    );
+    const tokenData = await tokenResponse.json();
+
+    if (!tokenData.access_token) {
+      return res
+        .status(400)
+        .json({ message: "Failed to retrieve access token", error: tokenData });
+    }
+
+    const accessToken = tokenData.access_token;
+
+    // Fetch GitHub user info
+    const userResponse = await fetch("https://api.github.com/user", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        Accept: "application/json",
+      },
+    });
+
+    const user = await userResponse.json();
+
+    res.json({ token: accessToken, user });
+  } catch (error) {
+    console.log("error", error.message);
+    res.status(500).json({ message: "Server error", error });
+  }
+};
+
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
@@ -48,6 +97,6 @@ const loginUser = async (req, res) => {
   }
 };
 
-const authController = { registerUser, loginUser };
+const authController = { registerUser, signupWithGithub, loginUser };
 
 module.exports = authController;

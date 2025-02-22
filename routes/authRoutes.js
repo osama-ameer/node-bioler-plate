@@ -40,6 +40,32 @@ router.post("/register", authController.registerUser);
 
 /**
  * @swagger
+ * /api/auth/register/github:
+ *   post:
+ *     summary: Register a new user with Github
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               code:
+ *                 type: string
+ *
+ *     responses:
+ *       201:
+ *         description: User registered successfully
+ *       400:
+ *         description: User already exists
+ *       500:
+ *         description: Server error
+ */
+router.post("/register/github", authController.signupWithGithub);
+
+/**
+ * @swagger
  * /api/auth/login:
  *   post:
  *     summary: Login a user

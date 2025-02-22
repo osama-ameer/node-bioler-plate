@@ -4,12 +4,14 @@ const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const businessRoutes = require("./routes/businessRoutes");
 const swaggerSetup = require("./utils/swagger");
+const cors = require("cors");
 
 dotenv.config();
-connectDB();
+// connectDB();
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 // Catch JSON parsing errors
 app.use((err, req, res, next) => {
