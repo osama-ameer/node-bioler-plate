@@ -19,6 +19,11 @@ app.use((err, req, res, next) => {
   next();
 });
 
+// Test Api
+app.get("/", (req, res) => {
+  res.json({ message: "Api Server is running" });
+});
+
 app.use("/api/auth", authRoutes);
 app.use("/api/business", businessRoutes);
 
